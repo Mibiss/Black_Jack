@@ -1,3 +1,7 @@
+"""
+This file is defining what a card can be
+"""
+
 suits = {"Hearts", "Diamonds", "Spades", "Clubs"}
 ranks = {
     "Two",
@@ -24,14 +28,18 @@ values = {
     "Eight": 8,
     "Nine": 9,
     "Ten": 10,
-    "Jack": 11,
-    "Queen": 12,
-    "King": 13,
-    "Ace": 14,
+    "Jack": 10,
+    "Queen": 10,
+    "King": 10,
+    "Ace": 1,
 }
 
 
 class Card:
+    """
+    Defining what a card can be
+    """
+
     def __init__(self, suit: str, rank: str) -> None:
         self.suit = suit
         self.rank = rank
