@@ -12,18 +12,18 @@ class Deck:
 
     def __init__(self) -> None:
 
-        self.all_cards = []
+        self.deck = []
 
         for suit in card.suits:
             for rank in card.ranks:
                 created_card = card.Card(suit=suit, rank=rank)
 
-                self.all_cards.append(created_card)
+                self.deck.append(created_card)
 
     def shuffle(self) -> None:
         """Shufle the cards within the deck"""
-        random.shuffle(self.all_cards)
+        random.shuffle(self.deck)
 
-    def deal_one(self) -> card:
+    def deal(self) -> card:
         """Deal the last cars of the deck"""
-        return self.all_cards.pop()
+        return self.deck.pop()
