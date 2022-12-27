@@ -24,54 +24,65 @@ def hit(deck, hand):
 
 
 def hit_or_stand(deck, hand):
-    print(hand)
     while True:
-        try:
-            user_input = input("hit or stand: ").lower()
-        except:
-            print(f"Please choose choose between hit or stand! ")
-            continue
-        if user_input != str:
-            print(f"Please choose between hit or stand!")
-            continue
-        elif user_input not in ["hit", "stand"]:
+        user_input = input("hit or stand: ").lower()
+        if user_input not in ["hit", "stand"]:
             print(f"Please choose between hit or stand!")
             continue
         else:
             if user_input == "hit":
                 hit(deck=deck, hand=hand)
+                show_some(player1, dealer)
             else:
                 return False
-            break
+            continue
 
 
 def show_some(player, dealer):
+    system("cls")
     print("The Player has: ")
     for cards in player.all_cards:
         print(cards, end=", ")
     print("\n")
     print("The Dealer has: ")
     print(dealer.all_cards[0], "and a flipped card")
+    print("\n")
 
 
 def show_all(player, dealer):
-    pass
+    system("cls")
+    print("The Player has: ")
+    for cards in player.all_cards:
+        print(cards, end=", ")
+    print("\n")
+    print("The Dealer has: ")
+    for cards in dealer.all_cards:
+        print(cards, end=", ")
+    print("\n")
 
 
 def player_busts():
-    pass
-
-
-def player_wins():
-    pass
+    if player_points > 21:
+        print("Player1 busted!")
+        return True
 
 
 def dealer_busts():
-    pass
+    if dealer_points > 21:
+        print("Dealer busted!")
+        return True
+
+
+def player_wins():
+    if player_points > dealer_points:
+        print("Player wins")
+        return True
 
 
 def dealer_wins():
-    pass
+    if player_points < dealer_points:
+        print("Dealer wins!")
+        return True
 
 
 def push():
@@ -79,16 +90,24 @@ def push():
 
 
 if __name__ == "__main__":
-    mihail = hand.Hand()
+    player = hand.Hand()
     dealer = hand.Hand()
-    dck = deck.Deck()
+    default_deck = deck.Deck()
     chips = chip.Chip()
 
-    dck.shuffle()
+    default_deck.shuffle()
+
+    player.add_card(dck.deal())
+    player.add_card(dck.deal())
+    dealer.add_card(dck.deal())
+    dealer.add_card(dck.deal())
+
+    show_some(player=player, dealer=dealer)
 
     playing = True
     while True:
         # Print an opening statement
+        print("Welcome to Black Jack!!")
 
         # Create & shuffle the deck, deal two cards to each player
 

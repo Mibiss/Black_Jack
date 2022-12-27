@@ -10,9 +10,11 @@ class Hand:
 
     def adjust_for_ace(self) -> None:
         value = 0
-        while value not in [1, 11]:
-            value = int(input("What value is your ace?(1 or 11) "))
-        return value
+        for card in self.all_cards:
+            value += card.value
+            if value > 21:
+                if card.rank == "Ace":
+                    card.value = 1
 
     def __str__(self) -> str:
         return f"You got {self.all_cards} in your hand"
