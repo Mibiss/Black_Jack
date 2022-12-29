@@ -14,9 +14,8 @@ def take_bet():
             print(f"Please choose between 1 and {player1.chips.total}!")
             continue
         else:
-            player1.chips.total -= amount
+            player1.chips.bet = amount
             break
-    return amount
 
 
 def hit(deck, hand):
@@ -52,10 +51,12 @@ def show_some(player, dealer):
 def show_all(player, dealer):
     system("cls")
     print("The Player has: ")
-    print([cards + ", " for cards in player.all_cards])
+    for cards in player.all_cards:
+        print(cards, end=", ")
     print("\n")
     print("The Dealer has: ")
-    print([cards + ", " for cards in dealer.all_cards])
+    for cards in dealer.all_cards:
+        print(cards, end=", ")
     print("\n")
 
 
@@ -63,28 +64,61 @@ def player_busts(player, chips):
     value = 0
     for cards in player.all_cards:
         value += cards.value
-    chips.lose_bet()
     if value > 21:
+        chips.lose_bet()
         return True
+    else:
+        return False
 
 
-def dealer_busts(player, dealer):
-    if dealer_points > 21:
-        print("Dealer busted!")
+def dealer_busts(dealer, chips):
+    value = 0
+    for cards in dealer.all_cards:
+        value += cards.value
+    if value > 21:
+        chips.win_bet()
         return True
+    else:
+        return False
 
 
-def player_wins(player, dealer):
-    if player_points > dealer_points:
-        print("Player wins")
+def player_wins(player, dealer, chips):
+    dealer_value = 0
+    player_value = 0
+    for p_cards, d_cards in zip(player.all_cards, dealer.all_cards):
+        player_value += p_cards.value
+        dealer_value += d_cards.value
+
+    if player_value > dealer_value:
+        chips.win_bet()
+
         return True
+    else:
+        return False
 
 
-def dealer_wins(player, dealer):
+def dealer_wins(player, dealer, chips):
+    dealer_value = 0
+    player_value = 0
+    for p_cards, d_cards in zip(player.all_cards, dealer.all_cards):
+        player_value += p_cards.value
+        dealer_value += d_cards.value
 
-    if player.all_cards < dealer_points:
-        print("Dealer wins!")
+    if player_value < dealer_value:
+        chips.lose_bet()
+
         return True
+    else:
+        return False
+
+
+def replay() -> bool:
+
+    """Asks if you want to play again"""
+
+    choice = input("Play again? Enter Yes or No: ").lower()
+
+    return choice == "yes"
 
 
 def push():
@@ -92,29 +126,33 @@ def push():
 
 
 if __name__ == "__main__":
+    counter = 0
+    print("Welcome to Black Jack!!")
+    name = input("Your name: ")
+    hand1 = hand.Hand()
+    hand2 = hand.Hand()
+
+    # Print an opening statement
+
+    player1 = player.Player(name=name, hand=hand1)
+    dealer1 = player.Player(name="dealer", hand=hand2)
+
+    # Create & shuffle the deck, deal two cards to each player
+    default_deck = deck.Deck()
+    default_deck.shuffle()
+
+    player1.hand.add_card(default_deck.deal())
+    player1.hand.add_card(default_deck.deal())
+    dealer1.hand.add_card(default_deck.deal())
+    dealer1.hand.add_card(default_deck.deal())
+    # Set up the Player's chips
+    player1.setChips(amount=100)
 
     playing = True
     while True:
-        hand1 = hand.Hand()
-        hand2 = hand.Hand()
+        counter += 1
 
-        # Print an opening statement
-        print("Welcome to Black Jack!!")
-        name = input("Your name: ")
-        player1 = player.Player(name=name, hand=hand1)
-        dealer1 = player.Player(name="dealer", hand=hand2)
-
-        # Create & shuffle the deck, deal two cards to each player
-        default_deck = deck.Deck()
-        default_deck.shuffle()
-
-        player1.hand.add_card(default_deck.deal())
-        player1.hand.add_card(default_deck.deal())
-        dealer1.hand.add_card(default_deck.deal())
-        dealer1.hand.add_card(default_deck.deal())
-        # Set up the Player's chips
-        player1.setChips(amount=1000)
-
+        print(f"Round number: {counter}")
         # Prompt the Player for their bet
         take_bet()
 
@@ -136,13 +174,30 @@ if __name__ == "__main__":
             break
 
         # If Player hasn't busted, play Dealer's hand until Dealer reaches 17
+        dealer_value = 0
+
+        for cards in dealer1.hand.all_cards:
+            dealer_value += cards.value
+
+        if dealer_value < 17:
+            hit(deck=default_deck, hand=dealer1.hand)
+
+        elif dealer_busts(dealer=dealer1.hand, chips=player1.chips):
+            print("Dealer Busted!!!!")
 
         # Show all cards
+        show_all(player=player1.hand, dealer=dealer1.hand)
 
         # Run different winning scenarios
-
+        if player_wins(player=player1.hand, dealer=dealer1.hand, chips=player1.chips):
+            print("Player has Won!!!!")
+        elif dealer_wins(player=player1.hand, dealer=dealer1.hand, chips=player1.chips):
+            print("Dealer has Won!!!!")
+        else:
+            print("This round is a tie!!!")
         # Inform Player of their chips total
+        print(player1.chips.total)
 
         # Ask to play again
-
-        break
+        if not replay():
+            break
