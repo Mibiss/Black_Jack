@@ -18,10 +18,10 @@ class Deck:
             for rank in card.ranks:
                 created_card = card.Card(suit=suit, rank=rank)
 
-                self.deck.append(created_card)
+                self.deck.append(str(created_card))
 
     def __str__(self) -> str:
-        return f"{self.deck}"
+        return self.deck
 
     def shuffle(self) -> None:
         """Shufle the cards within the deck"""

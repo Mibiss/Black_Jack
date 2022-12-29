@@ -9,7 +9,7 @@ class Player:
         self.chips = Chip()
 
     def __str__(self) -> str:
-        print(f"{self.name} has {self.chips} chips")
+        return f"{self.name} has {self.chips.total} chips"
 
     def setChips(self, amount: int):
         self.chips.total = amount

@@ -40,8 +40,7 @@ def hit_or_stand(deck, hand):
 def show_some(player, dealer):
     system("cls")
     print("The Player has: ")
-    for cards in player.all_cards:
-        print(cards, end=", ")
+    print(*player.all_cards, sep=", ")
     print("\n")
     print("The Dealer has: ")
     print(dealer.all_cards[0], "and a flipped card")
@@ -51,12 +50,10 @@ def show_some(player, dealer):
 def show_all(player, dealer):
     system("cls")
     print("The Player has: ")
-    for cards in player.all_cards:
-        print(cards, end=", ")
+    print(*player.all_cards, sep=", ")
     print("\n")
     print("The Dealer has: ")
-    for cards in dealer.all_cards:
-        print(cards, end=", ")
+    print(*dealer.all_cards, sep=", ")
     print("\n")
 
 
@@ -91,7 +88,6 @@ def player_wins(player, dealer, chips):
 
     if player_value > dealer_value:
         chips.win_bet()
-
         return True
     else:
         return False
@@ -106,7 +102,6 @@ def dealer_wins(player, dealer, chips):
 
     if player_value < dealer_value:
         chips.lose_bet()
-
         return True
     else:
         return False
@@ -196,7 +191,8 @@ if __name__ == "__main__":
         else:
             print("This round is a tie!!!")
         # Inform Player of their chips total
-        print(player1.chips.total)
+        print(player1.hand)
+        print(player1)
 
         # Ask to play again
         if not replay():
