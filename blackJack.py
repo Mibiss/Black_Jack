@@ -59,6 +59,8 @@ def show_all(player, dealer):
 
 def player_busts(player, chips):
     value = 0
+    print(player1.hand.all_cards, player1.hand.all_cards[0])
+
     for cards in player.all_cards:
         value += cards.value
     if value > 21:
@@ -166,7 +168,7 @@ if __name__ == "__main__":
             if player_busts(player=player1.hand, chips=player1.chips):
                 print(f"Player {player1.chips.total}")
                 print("Player busted!!")
-            break
+                break
 
         # If Player hasn't busted, play Dealer's hand until Dealer reaches 17
         dealer_value = 0
@@ -191,7 +193,7 @@ if __name__ == "__main__":
         else:
             print("This round is a tie!!!")
         # Inform Player of their chips total
-        print(player1.hand)
+        print(*player1.hand)
         print(player1)
 
         # Ask to play again
