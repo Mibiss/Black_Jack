@@ -1,4 +1,4 @@
-import chip, hand, deck, player
+import chip, hand, deck
 from os import system
 
 
@@ -31,7 +31,7 @@ def hit_or_stand(deck, hand):
         else:
             if user_input == "hit":
                 hit(deck=deck, hand=hand)
-                show_some(player=player1.hand, dealer=dealer1.hand)
+                show_some(player=player1, dealer=dealer1)
                 break
             else:
                 return False
@@ -59,7 +59,7 @@ def show_all(player, dealer):
 
 def player_busts(player, chips):
     value = 0
-    print(player1.hand.all_cards, player1.hand.all_cards[0])
+    print(player1.all_cards, player1.all_cards[0])
 
     for cards in player.all_cards:
         value += cards.value
@@ -124,28 +124,27 @@ def push():
 
 if __name__ == "__main__":
     counter = 0
-    print("Welcome to Black Jack!!")
-    name = input("Your name: ")
-    hand1 = hand.Hand()
-    hand2 = hand.Hand()
+    
+    player1 = hand.Hand()
+    dealer1 = hand.Hand()
 
     # Print an opening statement
-
-    player1 = player.Player(name=name, hand=hand1)
-    dealer1 = player.Player(name="dealer", hand=hand2)
-
+    print("Welcome to Black Jack!!")
+    
     # Create & shuffle the deck, deal two cards to each player
     default_deck = deck.Deck()
     default_deck.shuffle()
 
-    player1.hand.add_card(default_deck.deal())
-    player1.hand.add_card(default_deck.deal())
-    dealer1.hand.add_card(default_deck.deal())
-    dealer1.hand.add_card(default_deck.deal())
+    player1.add_card(default_deck.deal())
+    player1.add_card(default_deck.deal())
+    dealer1.add_card(default_deck.deal())
+    dealer1.add_card(default_deck.deal())
+    
     # Set up the Player's chips
-    player1.setChips(amount=100)
+    player_chips = chip.Chip()
 
     playing = True
+    
     while True:
         counter += 1
 
@@ -154,47 +153,46 @@ if __name__ == "__main__":
         take_bet()
 
         # Show cards (but keep one dealer card hidden)
-        show_some(player=player1.hand, dealer=dealer1.hand)
+        show_some(player=player1, dealer=dealer1)
 
         while playing:  # recall this variable from our hit_or_stand function
 
             # Prompt for Player to Hit or Stand
-            hit_or_stand(deck=default_deck, hand=player1.hand)
+            hit_or_stand(deck=default_deck, hand=player1)
 
             # Show cards (but keep one dealer card hidden)
-            show_some(player=player1.hand, dealer=dealer1.hand)
+            show_some(player=player1, dealer=dealer1)
 
             # If player's hand exceeds 21, run player_busts() and break out of loop
-            if player_busts(player=player1.hand, chips=player1.chips):
-                print(f"Player {player1.chips.total}")
+            if player_busts(player=player1, chips=player_chips):
+                print(f"Player {player_chips.total}")
                 print("Player busted!!")
                 break
 
         # If Player hasn't busted, play Dealer's hand until Dealer reaches 17
         dealer_value = 0
 
-        for cards in dealer1.hand.all_cards:
+        for cards in dealer1.all_cards:
             dealer_value += cards.value
 
         if dealer_value < 17:
-            hit(deck=default_deck, hand=dealer1.hand)
+            hit(deck=default_deck, hand=dealer1)
 
-        elif dealer_busts(dealer=dealer1.hand, chips=player1.chips):
+        elif dealer_busts(dealer=dealer1, chips=player_chips)
             print("Dealer Busted!!!!")
 
         # Show all cards
-        show_all(player=player1.hand, dealer=dealer1.hand)
+        show_all(player=player1, dealer=dealer1)
 
         # Run different winning scenarios
-        if player_wins(player=player1.hand, dealer=dealer1.hand, chips=player1.chips):
+        if player_wins(player=player1, dealer=dealer1, chips=player_hips):
             print("Player has Won!!!!")
-        elif dealer_wins(player=player1.hand, dealer=dealer1.hand, chips=player1.chips):
+        elif dealer_wins(player=player1, dealer=dealer1, chips=player_hips):
             print("Dealer has Won!!!!")
         else:
             print("This round is a tie!!!")
         # Inform Player of their chips total
-        print(*player1.hand)
-        print(player1)
+        print(*player1)
 
         # Ask to play again
         if not replay():
