@@ -58,11 +58,9 @@ def show_all(player, dealer):
 
 
 def player_busts(player, chips):
-    value = 0
-    print(player1.all_cards, player1.all_cards[0])
-
-    for cards in player.all_cards:
-        value += cards.value
+    
+    value = sum([cards.value for cards in player.all_cards])
+    
     if value > 21:
         chips.lose_bet()
         return True
@@ -71,9 +69,8 @@ def player_busts(player, chips):
 
 
 def dealer_busts(dealer, chips):
-    value = 0
-    for cards in dealer.all_cards:
-        value += cards.value
+    value = sum([cards.value for cards in dealer.all_cards])
+
     if value > 21:
         chips.win_bet()
         return True
@@ -82,11 +79,8 @@ def dealer_busts(dealer, chips):
 
 
 def player_wins(player, dealer, chips):
-    dealer_value = 0
-    player_value = 0
-    for p_cards, d_cards in zip(player.all_cards, dealer.all_cards):
-        player_value += p_cards.value
-        dealer_value += d_cards.value
+    player_value = sum([cards.value for cards in player.all_cards])
+    dealer_value = sum([cards.value for cards in dealer.all_cards])
 
     if player_value > dealer_value:
         chips.win_bet()
@@ -96,11 +90,8 @@ def player_wins(player, dealer, chips):
 
 
 def dealer_wins(player, dealer, chips):
-    dealer_value = 0
-    player_value = 0
-    for p_cards, d_cards in zip(player.all_cards, dealer.all_cards):
-        player_value += p_cards.value
-        dealer_value += d_cards.value
+    player_value = sum([cards.value for cards in player.all_cards])
+    dealer_value = sum([cards.value for cards in dealer.all_cards])
 
     if player_value < dealer_value:
         chips.lose_bet()
