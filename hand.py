@@ -17,4 +17,4 @@ class Hand:
                     card.value = 1
 
     def __str__(self) -> str:
-        return f"You got {self.all_cards} in your hand"
+        return self.all_cards
