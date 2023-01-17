@@ -27,6 +27,6 @@ class Deck:
         """Shufle the cards within the deck"""
         random.shuffle(self.deck)
 
-    def deal(self) -> card:
+    def deal(self) -> card.Card:
         """Deal the last cars of the deck"""
         return self.deck.pop()

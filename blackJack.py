@@ -1,98 +1,105 @@
-import chip, hand, deck
 from os import system
+import chip, hand, deck
 
 
-def take_bet():
+def take_bet() -> None:
+    """Asking the player how much they want to bet."""
     print(f"total amount: {player_chips.total}")
     while True:
         try:
-            amount = int(input("Choose the bet amount: "))
+            player_chips.bet = int(input("Choose the bet amount: "))
         except:
             print(f"Please choose the amount in integer!")
             continue
-        if amount < 1 or amount > player_chips.total:
-            print(f"Please choose between 1 and {player_chips.total}!")
-            continue
         else:
-            player_chips.bet = amount
-            break
+            if player_chips.bet < 1 or player_chips.bet > player_chips.total:
+                print(f"Please choose between 1 and {player_chips.total}!")
+                continue
+            else:
+                break
 
 
-def hit(deck, hand):
+def hit(deck: deck.Deck, hand: hand.Hand) -> None:
+    """Adding a card object to a hand object"""
     hand.add_card(deck.deal())
+    hand.adjust_for_ace()
 
 
-def hit_or_stand(deck, hand):
+def hit_or_stand(deck: deck.Deck, hand: hand.Hand) -> None:
+    """Asking the player to hit(get one more card)
+    or to stand(stand on this amount of cards)"""
     while True:
         user_input = input("hit or stand: ").lower()
+
         if user_input not in ["hit", "stand"]:
             print(f"Please choose between hit or stand!")
             continue
 
+        elif user_input == "hit":
+            hit(deck=deck, hand=hand)
+            show_some(player=player1, dealer=dealer1)
+
+            if player_busts(player=hand):
+                break
+            continue
         else:
-            if user_input == "hit":
-                hit(deck=deck, hand=hand)
-                show_some(player=player1, dealer=dealer1)
-                if player_busts(player=player1):
-                    break
-                continue
-            else:
-                return False
+            break
 
 
-def show_some(player, dealer):
+def show_some(player: hand.Hand, dealer: hand.Hand) -> None:
+    """Printing all Player's cards and 1 of the Dealer's cards
+    and the value of the Player's cards"""
     system("cls")
     print("The Player has: ")
     print(*player.all_cards, sep=", ")
+    print(f"Value of Player's hand is: {player.value}")
     print("\n")
     print("The Dealer has: ")
-    print(dealer.all_cards[0], "and a flipped card")
+    print(dealer.all_cards[0], "and a hidden card")
     print("\n")
 
 
-def show_all(player, dealer):
+def show_all(player: hand.Hand, dealer: hand.Hand) -> None:
+    """Printing all Player's and the Dealer's cards
+    with their corresponding value"""
     system("cls")
     print("The Player has: ")
     print(*player.all_cards, sep=", ")
+    print(f"Value of Player's hand is: {player.value}")
     print("\n")
     print("The Dealer has: ")
     print(*dealer.all_cards, sep=", ")
+    print(f"Value of Dealer's hand is: {dealer.value}")
     print("\n")
 
 
-def player_busts(player):
-    value = sum([cards.value for cards in player.all_cards])
-
-    if value > 21:
+def player_busts(player: hand.Hand) -> bool:
+    """Checking if Player's value is not over 21"""
+    if player.value > 21:
         return True
     else:
         return False
 
 
-def dealer_busts(dealer):
-    value = sum([cards.value for cards in dealer.all_cards])
-
-    if value > 21:
+def dealer_busts(dealer: hand.Hand) -> bool:
+    """Checking if Dealer's value is not over 21"""
+    if dealer.value > 21:
         return True
     else:
         return False
 
 
-def player_wins(player, dealer):
-    player_value = sum([cards.value for cards in player.all_cards])
-    dealer_value = sum([cards.value for cards in dealer.all_cards])
-
-    if player_value > dealer_value:
+def player_wins(player: hand.Hand, dealer: hand.Hand) -> bool:
+    """Checking if Player's value is higher than Dealer's"""
+    if player.value > dealer.value:
         return True
     else:
         return False
 
 
-def dealer_wins(player, dealer):
-    player_value = sum([cards.value for cards in player.all_cards])
-    dealer_value = sum([cards.value for cards in dealer.all_cards])
-
-    if player_value < dealer_value:
+def dealer_wins(player: hand.Hand, dealer: hand.Hand) -> bool:
+    """Checking if Dealer's value is higher than Player's"""
+    if player.value < dealer.value:
         return True
     else:
         return False
@@ -107,8 +114,10 @@ def replay() -> bool:
     return choice == "yes"
 
 
-def push():
-    pass
+def push() -> None:
+    """Printing out that the game is a tie"""
+    show_all(player=player1, dealer=dealer1)
+    print("This round is a tie!!!")
 
 
 if __name__ == "__main__":
@@ -122,12 +131,14 @@ if __name__ == "__main__":
     print("Welcome to Black Jack!!")
 
     while True:
+        # Checking if player still has chips to play with
         if player_chips.total <= 0:
             print("No chips to play!")
             break
 
         counter += 1
 
+        # Creating 2 players
         player1 = hand.Hand()
         dealer1 = hand.Hand()
 
@@ -140,61 +151,61 @@ if __name__ == "__main__":
         dealer1.add_card(default_deck.deal())
         dealer1.add_card(default_deck.deal())
 
+        # Showing round number and prompting the Player for their bet
         print(f"Round number: {counter}")
-        # Prompt the Player for their bet
         take_bet()
 
-        # Show cards (but keep one dealer card hidden)
+        # Showing cards (but keeping one dealer card hidden)
         show_some(player=player1, dealer=dealer1)
 
-        while playing:  # recall this variable from our hit_or_stand function
+        while playing:
 
-            # Prompt for Player to Hit or Stand
+            # Prompting Player to Hit or Stand
             hit_or_stand(deck=default_deck, hand=player1)
 
-            # Show cards (but keep one dealer card hidden)
+            # Showing cards (but keeping one dealer card hidden)
             show_some(player=player1, dealer=dealer1)
 
-            # If player's hand exceeds 21, run player_busts() and break out of loop
+            # If player's hand exceeds 21, run player_busts()
             if player_busts(player=player1):
                 player_chips.lose_bet()
-                print(f"Player {player_chips.total}")
-                print("Player busted!!")
-                break
+                print(f"Player chips: {player_chips.total}")
+                print("Player busted!")
+            break
 
-            # If Player hasn't busted, play Dealer's hand until Dealer reaches 17
-            dealer_value = sum([cards.value for cards in dealer1.all_cards])
-
-            while dealer_value < 17:
+        if player1.value <= 21:
+            # If Player hasn't busted, playing Dealer's hand until Dealer reaches 17
+            while dealer1.value < 17:
                 hit(deck=default_deck, hand=dealer1)
-                dealer_value = sum([cards.value for cards in dealer1.all_cards])
 
+            # Showing all cards
+            show_all(player=player1, dealer=dealer1)
+
+            # Checking if dealer busted
             if dealer_busts(dealer=dealer1):
                 player_chips.win_bet()
-                show_all(player=player1, dealer=dealer1)
                 print("Dealer Busted!!!!")
                 break
-            else:
-                # Show all cards
-                show_all(player=player1, dealer=dealer1)
 
-                # Run different winning scenarios
+            else:
+                # Running different winning scenarios
                 if player_wins(player=player1, dealer=dealer1):
                     player_chips.win_bet()
                     print("Player has Won!!!!")
                     break
+
                 elif dealer_wins(player=player1, dealer=dealer1):
                     player_chips.lose_bet()
                     print("Dealer has Won!!!!")
                     break
-                else:
-                    show_all(player=player1, dealer=dealer1)
-                    print("This round is a tie!!!")
-                    break
-        # Inform Player of their chips total
 
+                else:
+                    push()
+                    break
+
+        # Informing Player of their chips total
         print("Your total chips are", player_chips.total)
 
-        # Ask to play again
+        # Asking to play again
         if not replay():
             break
