@@ -28,10 +28,13 @@ def hit_or_stand(deck, hand):
         if user_input not in ["hit", "stand"]:
             print(f"Please choose between hit or stand!")
             continue
+
         else:
             if user_input == "hit":
                 hit(deck=deck, hand=hand)
                 show_some(player=player1, dealer=dealer1)
+                if player_busts(player=player1):
+                    break
                 continue
             else:
                 return False
@@ -57,43 +60,39 @@ def show_all(player, dealer):
     print("\n")
 
 
-def player_busts(player, chips):
+def player_busts(player):
     value = sum([cards.value for cards in player.all_cards])
 
     if value > 21:
-        chips.lose_bet()
         return True
     else:
         return False
 
 
-def dealer_busts(dealer, chips):
+def dealer_busts(dealer):
     value = sum([cards.value for cards in dealer.all_cards])
 
     if value > 21:
-        chips.win_bet()
         return True
     else:
         return False
 
 
-def player_wins(player, dealer, chips):
+def player_wins(player, dealer):
     player_value = sum([cards.value for cards in player.all_cards])
     dealer_value = sum([cards.value for cards in dealer.all_cards])
 
     if player_value > dealer_value:
-        chips.win_bet()
         return True
     else:
         return False
 
 
-def dealer_wins(player, dealer, chips):
+def dealer_wins(player, dealer):
     player_value = sum([cards.value for cards in player.all_cards])
     dealer_value = sum([cards.value for cards in dealer.all_cards])
 
     if player_value < dealer_value:
-        chips.lose_bet()
         return True
     else:
         return False
@@ -119,6 +118,8 @@ if __name__ == "__main__":
     player_chips = chip.Chip()
 
     playing = True
+    # Print an opening statement
+    print("Welcome to Black Jack!!")
 
     while True:
         if player_chips.total <= 0:
@@ -129,9 +130,6 @@ if __name__ == "__main__":
 
         player1 = hand.Hand()
         dealer1 = hand.Hand()
-
-        # Print an opening statement
-        print("Welcome to Black Jack!!")
 
         # Create & shuffle the deck, deal two cards to each player
         default_deck = deck.Deck()
@@ -158,36 +156,41 @@ if __name__ == "__main__":
             show_some(player=player1, dealer=dealer1)
 
             # If player's hand exceeds 21, run player_busts() and break out of loop
-            player_busts(player=player1, chips=player_chips)
-            print(f"Player {player_chips.total}")
-            print("Player busted!!")
-            break
+            if player_busts(player=player1):
+                player_chips.lose_bet()
+                print(f"Player {player_chips.total}")
+                print("Player busted!!")
+                break
 
-        # If Player hasn't busted, play Dealer's hand until Dealer reaches 17
-        dealer_value = sum([cards.value for cards in dealer1.all_cards])
-
-        while dealer_value < 17:
-            hit(deck=default_deck, hand=dealer1)
+            # If Player hasn't busted, play Dealer's hand until Dealer reaches 17
             dealer_value = sum([cards.value for cards in dealer1.all_cards])
 
-        if dealer_busts(dealer=dealer1, chips=player_chips):
-            player_chips.win_bet()
-            show_all(player=player1, dealer=dealer1)
-            print("Dealer Busted!!!!")
-        else:
-            # Show all cards
-            show_all(player=player1, dealer=dealer1)
+            while dealer_value < 17:
+                hit(deck=default_deck, hand=dealer1)
+                dealer_value = sum([cards.value for cards in dealer1.all_cards])
 
-            # Run different winning scenarios
-            if player_wins(player=player1, dealer=dealer1, chips=player_chips):
+            if dealer_busts(dealer=dealer1):
+                player_chips.win_bet()
                 show_all(player=player1, dealer=dealer1)
-                print("Player has Won!!!!")
-            elif dealer_wins(player=player1, dealer=dealer1, chips=player_chips):
-                show_all(player=player1, dealer=dealer1)
-                print("Dealer has Won!!!!")
+                print("Dealer Busted!!!!")
+                break
             else:
+                # Show all cards
                 show_all(player=player1, dealer=dealer1)
-                print("This round is a tie!!!")
+
+                # Run different winning scenarios
+                if player_wins(player=player1, dealer=dealer1):
+                    player_chips.win_bet()
+                    print("Player has Won!!!!")
+                    break
+                elif dealer_wins(player=player1, dealer=dealer1):
+                    player_chips.lose_bet()
+                    print("Dealer has Won!!!!")
+                    break
+                else:
+                    show_all(player=player1, dealer=dealer1)
+                    print("This round is a tie!!!")
+                    break
         # Inform Player of their chips total
 
         print("Your total chips are", player_chips.total)
