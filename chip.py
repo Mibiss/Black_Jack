@@ -8,3 +8,6 @@ class Chip:
 
     def lose_bet(self) -> None:
         self.total -= self.bet
+
+    def __str__(self) -> str:
+        return self.total

@@ -20,10 +20,13 @@ class Deck:
 
                 self.deck.append(created_card)
 
+    def __str__(self) -> str:
+        return self.deck
+
     def shuffle(self) -> None:
         """Shufle the cards within the deck"""
         random.shuffle(self.deck)
 
-    def deal(self) -> card:
+    def deal(self) -> card.Card:
         """Deal the last cars of the deck"""
         return self.deck.pop()

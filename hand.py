@@ -1,18 +1,23 @@
+import card
+
+
 class Hand:
     def __init__(self) -> None:
         self.all_cards = []
+        self.value = 0
+        self.aces = 0
 
-    def add_card(self, new_cards) -> None:
-        if type(new_cards) == type([]):
-            self.all_cards.extend(new_cards)
-        else:
-            self.all_cards.append(new_cards)
+    def add_card(self, new_card) -> None:
+        self.all_cards.append(new_card)
+        self.value += card.values[new_card.rank]
+
+        if new_card.rank == "Ace":
+            self.aces += 1
 
     def adjust_for_ace(self) -> None:
-        value = 0
-        while value not in [1, 11]:
-            value = int(input("What value is your ace?(1 or 11) "))
-        return value
+        while self.value > 21 and self.aces:
+            self.value -= 10
+            self.aces -= 1
 
     def __str__(self) -> str:
-        return f"You got {self.all_cards} in your hand"
+        return f"{self.all_cards}"
