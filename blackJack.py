@@ -106,7 +106,6 @@ def dealer_wins(player: hand.Hand, dealer: hand.Hand) -> bool:
 
 
 def replay() -> bool:
-
     """Asks if you want to play again"""
 
     choice = input("Play again? Enter Yes or No: ").lower()
@@ -159,7 +158,6 @@ if __name__ == "__main__":
         show_some(player=player1, dealer=dealer1)
 
         while playing:
-
             # Prompting Player to Hit or Stand
             hit_or_stand(deck=default_deck, hand=player1)
 
@@ -185,27 +183,30 @@ if __name__ == "__main__":
             if dealer_busts(dealer=dealer1):
                 player_chips.win_bet()
                 print("Dealer Busted!!!!")
-                break
+                if not replay():
+                    break
 
             else:
                 # Running different winning scenarios
                 if player_wins(player=player1, dealer=dealer1):
                     player_chips.win_bet()
                     print("Player has Won!!!!")
-                    break
+                    if not replay():
+                        break
 
                 elif dealer_wins(player=player1, dealer=dealer1):
                     player_chips.lose_bet()
                     print("Dealer has Won!!!!")
-                    break
+                    if not replay():
+                        break
 
                 else:
                     push()
-                    break
+                    player_chips
+                    if not replay():
+                        break
 
         # Informing Player of their chips total
         print("Your total chips are", player_chips.total)
 
         # Asking to play again
-        if not replay():
-            break
