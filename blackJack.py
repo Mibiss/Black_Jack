@@ -208,5 +208,3 @@ if __name__ == "__main__":
 
         # Informing Player of their chips total
         print("Your total chips are", player_chips.total)
-
-        # Asking to play again
